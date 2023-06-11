@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import sys
 
 link = str(sys.argv[1])
-
+# https://www.bellevuecollege.edu/publications/
 # get the HTML content
 response = requests.get(link)
 
@@ -34,8 +34,12 @@ for links in pdf_links:
     # The PDF file name will be the last part of the url
     pdf_name = os.path.split(pdf_url)[-1]
 
-    # we write the content of the response to the file
+    # we write the content of the response to the file 
+    # same name as the file
     with open(pdf_name,'wb') as file:
-        file.write(pdf_response.content)
+        #file.write(pdf_response.content)
+        for chunk in response.iter_content(chunk_size=1024):
+            if chunk:
+                file.write(chunk)
     
-    print(f"Downloaded {pdf_name}!")
+   
