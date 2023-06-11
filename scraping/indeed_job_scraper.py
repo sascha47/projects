@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+# This scraper is designed to return the Job Description and the Job Title of an indeed post
+# However their cloudfare security solution blocked this attempt 
+# Instead of tossing this script, I want to use it showcase my development and why I will be attempting
+# to use Indeeds API next.
+
+
 # from selenium import webdriver
 # from selenium.webdriver.chrome.service import Service
 # from selenium.webdriver.common.by import By
