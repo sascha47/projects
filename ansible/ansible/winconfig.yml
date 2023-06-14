@@ -1,0 +1,47 @@
+#configMgmt4
+#20232405
+#create local user, group, directoy and share the c drive shared.
+
+
+#create a play book
+- name: create playbook
+  hosts: windows1
+  tasks:
+
+
+
+#add group
+    - name: create group
+      ansible.windows.win_group:
+        name: Group1
+        description: deploy Group1
+        state: present
+
+# add user
+    - name: create user 
+      ansible.windows.win_user:
+        name: User1
+        password: B0bP4ssw0rd
+        state: present
+        groups:
+         - Group1 # create
+        home_directory: c:\Shared  # create
+
+
+#Create Path
+    - name: Touch file
+      ansible.windows.win_file:
+        path: C:\Shared        # gruop1 needs access
+        state: directory
+        owner: User1
+        group: Group1
+
+
+# # Set OWNERSHIP of file
+#     - name: Set ownership
+#       ansible.windows.win_owner:
+#         path: C:\Shared
+#         user: User1
+
+
+  

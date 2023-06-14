@@ -1,0 +1,126 @@
+#!/usr/bin/python3
+#2023/05/20
+#check hash
+
+# - name: hash checker
+#   hosts: linux1
+#   tasks:
+#     - name: Read stuff from CSV file and do stuff
+#       community.general.read_csv:
+#         path: /home/ubuntu/SaschaW/week_10/ansible/monitor.csv
+#         fieldnames: [filepath,dbash,db hash date,current hash,status]
+#         delimiter: ','
+#       register: hashes
+#       delegate_to: localhost
+
+#     # - name: read list
+#     #   debug:
+#     #     msg: "{{hashes.list}}"
+
+#     - name: file checks #grab filepath
+#       stat:
+#         path: "{{item.filepath}}"
+#       #register: file_path
+#       loop: "{{hashes.list}}"
+#       loop_control:
+#         loop_var: item
+#         label: "{{item.filepath}}"
+#       when: item.filepath != 'filepath'
+#       register: file_paths
+
+#     - name: get hash
+#       ansible.builtin.shell:
+#         cmd: "md5sum '{{item.filepath}}'"
+#       loop: "{{hashes.list}}"
+#       loop_control:
+#         loop_var: item
+#         label: "{{item.filepath}}"
+#       when: item.filepath != 'filepath'
+#       register: hash_results
+        
+    
+#     - name: compare hashes
+#       set_fact:
+#         filepath: "{{ item.filepath }}"
+#         expected_hash: "{{ item.dbash }}"
+#         current_hash: "{{ item.stdout.split()[0] }}"
+#         comparison_result: "{{ 'Same' if current_hash == expected_hash else 'Different' }}"
+#       loop: "{{ hash_result.results }}"
+#       when: item.filepath != 'filepath' and item.stdout != ''
+      
+      
+#     - name: display comparison result
+#       debug:
+#         msg: |
+#           File: {{ filepath }}
+#           Expected Hash: {{ expected_hash }}
+#           Current Hash: {{ current_hash }}
+#           Result: "{{ comparison_result }}"
+#       when: filepath is defined and expected_hash is defined and current_hash is defined
+#       changed_when: comparison_result == 'Different'
+
+
+- name: Compare hashes
+  hosts: linux1
+  tasks:
+    - name: Read CSV file
+      community.general.read_csv:
+        path: /home/ubuntu/SaschaW/week_10/ansible/monitor.csv
+        fieldnames: [filepath, dbash, db hash date, current hash, status]
+        delimiter: ','
+      register: csv_data
+
+    - name: Exclude header
+      set_fact:
+        filtered_csv_data: "{{ csv_data.list[1:] }}"
+
+    - name: Compare hashes
+      ansible.builtin.shell: "md5sum '{{ item.filepath }}' | awk '{print $1}'"
+      loop: "{{ filtered_csv_data }}"
+      loop_control:
+        loop_var: item
+      register: hash_results
+
+    - name: Set facts
+      set_fact:
+        comparison_results: "{{ comparison_results | default([]) + [{'filepath': item.item.filepath, 'expected_hash': item.item.dbash, 'current_hash': item.stdout, 'comparison_result': 'Different' if item.item.dbash != item.stdout else 'Same'}] }}"
+      loop: "{{ hash_results.results }}"
+
+    - name: Display comparison results
+      debug:
+        msg: "File: {{ item.filepath }} | Expected Hash: {{ item.expected_hash }} | Current Hash: {{ item.current_hash }} | Result: {{ item.comparison_result }}"
+      loop: "{{ comparison_results }}"
+
+
+
+# - name: Compare hashes
+#   hosts: linux1
+#   tasks:
+#     - name: Read CSV file
+#       community.general.read_csv:
+#         path: /home/ubuntu/SaschaW/week_10/ansible/monitor.csv
+#         fieldnames: [filepath, dbash, db hash date, current hash, status]
+#         delimiter: ','
+#       register: csv_data
+
+#     - name: Exclude header
+#       set_fact:
+#         filtered_csv_data: "{{ csv_data.list[1:] }}"
+
+#     - name: Compare hashes
+#       ansible.builtin.shell: "md5sum '{{ item.filepath }}' | awk '{print $1}'"
+#       loop: "{{ filtered_csv_data }}"
+#       loop_control:
+#         loop_var: item
+#       register: hash_results
+
+#     - name: Set facts
+#       set_fact:
+#         comparison_results: "{{ comparison_results | default([]) + [{'filepath': item.item.filepath, 'expected_hash': item.item.dbash, 'current_hash': item.stdout, 'comparison_result': 'Different' if item.item.dbash != item.stdout else 'Same'}] }}"
+#       loop: "{{ hash_results.results }}"
+
+#     - name: Display comparison results
+#       debug:
+#         msg: "File: {{ item.filepath }} | Expected Hash: {{ item.expected_hash }} | Current Hash: {{ item.current_hash }} | Result: {{ item.comparison_result }}"
+#       loop: "{{ comparison_results }}"
+#       changed_when: item.item.dbash != item.stdout
