@@ -1,0 +1,16 @@
+#configMgmt1
+#20231905
+#ping windows and linux servers
+
+- name: ping hosts # description of playbook
+  hosts: windows1,linux1 # hosts that will be pinged based on hosts file
+  tasks: # what playbook will do
+    - name: Ping a Windows host #what this play does
+      ansible.windows.win_ping: # module that will be used for ping
+        data: "pong" # data to be returned
+      when: "'windows1' in inventory_hostname" # when windows1 is called from inventoory_hostname and is matched
+
+    - name: Ping a Linux host # what will be done
+      ansible.builtin.ping: # module to be used to ping linux
+      when: "'linux1' in inventory_hostname" #when  match in host occurs linux1
+

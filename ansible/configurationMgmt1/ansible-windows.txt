@@ -1,0 +1,21 @@
+windows1 | CHANGED | rc=0 >>
+
+
+    Directory: C:\
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----         8/19/2021   6:24 AM                EFI                                                                  
+d-----          5/8/2021   8:20 AM                PerfLogs                                                             
+d-r---         8/19/2021   6:35 AM                Program Files                                                        
+d-----         5/11/2023   4:09 AM                Program Files (x86)                                                  
+d-r---         5/17/2023   9:55 PM                Users                                                                
+d-----         5/17/2023  10:10 PM                Windows                                                              
+
+
+
+windows1 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}

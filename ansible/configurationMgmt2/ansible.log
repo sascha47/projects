@@ -1,0 +1,2 @@
+May 23 20:00:01 ip-172-31-25-185 CRON[20790]: (root) CMD (/usr/games/cowsay 'Hi There!')
+May 23 20:05:01 ip-172-31-25-185 CRON[21458]: (root) CMD (/usr/games/cowsay 'Hi There!')

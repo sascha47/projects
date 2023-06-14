@@ -1,0 +1,76 @@
+# #confgmgmt3
+# #20232305
+# #something is done here
+
+# - name: hellocow
+#   hosts: linux1
+#   tasks:
+# # INSTALL 
+#       - name: install cowsay
+#         become: true
+#         apt:
+#           name: cowsay
+
+# #CRON
+#       # - name: schedule cron
+#       #   become: true
+#       #   ansible.builtin.cron
+#       #   ron:
+#       #     name: cowsay job
+#       #     minute: "*/1****"
+#       #     hour: "*"
+#       #     day: "*"
+#       #     month: "*"
+#       #     job: "/usr/games/cowsay 'good'"
+
+  
+#       - name: Create cron file
+#         ansible.builtin.copy:
+#           dest: /etc/cron.d/mycron
+#           content: "* * * * * touch ~/SaschaW/week_9/ansible/configurationMgmt2/txt.txt"
+#           owner: root
+#           group: root
+#           mode: "0777"
+
+
+
+#       - name: crap
+#         cron:
+#           name: crap3
+#           minute: "1"
+#           job:  "* * * * * touch ~/SaschaW/week_9/ansible/configurationMgmt2/txt.txt"
+
+
+
+#       - name: Creates a cron file under /etc/cron.d
+#         cron:
+#           name: yum autoupdate
+#           minute: "1"
+#           job: "* * * * * touch /home/ubuntu/SaschaW/week_9/ansible/configurationMgmt2/"
+#           cron_file: /etc/cron.d/mycron
+
+- name: Install cowsay and schedule cron job
+  hosts: linux1
+  become: true
+  tasks:
+    - name: Install cowsay
+      apt:
+        name: cowsay
+
+    - name: Schedule cron job
+      ansible.builtin.cron:
+        name: cowsay
+        job: "/usr/games/cowsay 'Hi There!'"
+        minute: "*/5"
+        hour: "*"
+        day: "*"
+        month: "*"
+        user: ubuntu
+
+    - name: Verify cowsay functionality
+      command: "/usr/games/cowsay 'Hello'"
+      register: cowsay_output
+
+    - name: Display cowsay output
+      debug:
+        var: cowsay_output.stdout_lines
