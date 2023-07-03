@@ -1,11 +1,11 @@
 import sys
 import re
 
-array = []
+mac_address = set()
 
 with open("dhcpdsmall.log","r") as file:
     for line in file:
-        m = re.search(r"\b\s(\w{2}:){5}\w{2}\s.*\(iPhone\)",line)
+        m = re.search("((?:\w{2}:){5}\w{2}).\(iPhone\)",line)
         if m:
-            array.append(m.group())
-    print(array)
+            mac_address.append(m.group())
+    print(mac_address)
